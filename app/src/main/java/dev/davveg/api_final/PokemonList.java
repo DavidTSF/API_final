@@ -6,6 +6,7 @@ import dev.davveg.api_final.models.Pokemon;
 
 public class PokemonList {
     private ArrayList<Pokemon> results;
+
     public ArrayList<Pokemon> getResults() {
         return results;
     }

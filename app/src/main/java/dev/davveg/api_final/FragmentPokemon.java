@@ -12,8 +12,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.SearchView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.List;
 
@@ -44,19 +47,39 @@ public class FragmentPokemon extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         pokemonViewModel = new ViewModelProvider(requireActivity()).get(PokemonViewModel.class);
-        pokemonViewModel.getPokemonList();
+        pokemonViewModel.getPokemonList(0);
         pokemonViewModel.pokemonById(5);
 
         PokemonsAdapter pa = new PokemonsAdapter();
         binding.recyclerviewContenidos.setAdapter(pa);
 
-
-
-
         pokemonViewModel.pokemonLista().observe(getViewLifecycleOwner(), new Observer<PokemonList>() {
             @Override
             public void onChanged(PokemonList elementos) {
                 pa.establecerLista(elementos.getResults());
+            }
+        });
+
+        binding.texto.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) { return false; }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                try {
+                    if ( s.equals("") ) {
+                        pokemonViewModel.getPokemonList(0);
+                    } else {
+                        pokemonViewModel.getPokemonList(Integer.parseInt(s));
+                    }
+
+                } catch (Exception e) {
+                    Snackbar snackbar = Snackbar.make(view, "El campo de texto solo puede llevar numeros", Snackbar.LENGTH_SHORT);
+                    snackbar.show();
+                    e.printStackTrace();
+                }
+
+                return false;
             }
         });
 
@@ -80,8 +103,6 @@ public class FragmentPokemon extends Fragment {
             Pokemon elemento = elementos.get(position);
 
             holder.binding.textName.setText(elemento.getName());
-            holder.binding.textHeight.setText(elemento.getHeight());
-            holder.binding.textWeight.setText(elemento.getWeight());
 
         }
 

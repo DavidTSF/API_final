@@ -1,13 +1,18 @@
 package dev.davveg.api_final.models;
 
+import com.google.gson.annotations.SerializedName;
+
+import java.util.List;
+
 public class Pokemon {
+    @SerializedName("name")
     private String name;
+    @SerializedName("height")
+    private int height;
+    @SerializedName("weight")
+    private int weight;
 
-    private String height;
-
-    private String weight;
-
-    public Pokemon(String name, String height, String weight) {
+    public Pokemon(String name, int height, int weight) {
         this.name = name;
         this.height = height;
         this.weight = weight;
@@ -17,11 +22,11 @@ public class Pokemon {
         return name;
     }
 
-    public String getHeight() {
+    public int getHeight() {
         return height;
     }
 
-    public String getWeight() {
+    public int getWeight() {
         return weight;
     }
 
@@ -29,11 +34,11 @@ public class Pokemon {
         this.name = name;
     }
 
-    public void setHeight(String height) {
+    public void setHeight(int height) {
         this.height = height;
     }
 
-    public void setWeight(String weight) {
+    public void setWeight(int weight) {
         this.weight = weight;
     }
 }

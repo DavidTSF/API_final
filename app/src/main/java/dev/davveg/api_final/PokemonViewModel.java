@@ -44,8 +44,8 @@ public class PokemonViewModel extends AndroidViewModel {
                 Pokemon foundPoke = response.body();
                 if (foundPoke != null) {
                     Log.d("POKEMON NAME", foundPoke.getName());
-                    Log.d("POKEMON HEIGHT", foundPoke.getHeight());
-                    Log.d("POKEMON WEIGHT", foundPoke.getWeight());
+                    Log.d("POKEMON HEIGHT", String.valueOf(foundPoke.getHeight()));
+                    Log.d("POKEMON WEIGHT", String.valueOf(foundPoke.getWeight()));
                 }
             }
             @Override
@@ -54,21 +54,11 @@ public class PokemonViewModel extends AndroidViewModel {
         });
     }
 
-    public void getPokemonList() {
-        Call<PokemonList> pokeCall = service.getPokemonList(20, 0);
+    public void getPokemonList(int offset) {
+        Call<PokemonList> pokeCall = service.getPokemonList(20, offset);
         pokeCall.enqueue(new Callback<PokemonList>() {
             @Override
             public void onResponse(Call<PokemonList> call, Response<PokemonList> response) {
-
-                response.body().getResults().forEach(
-                        pokemon -> {
-                            Log.d("DEBUG name", pokemon.getName());
-                            Log.d("DEBUG weight", pokemon.getWeight());
-                            Log.d("DEBUG height", pokemon.getHeight());
-
-                        }
-                );
-
                 pokemonLista.postValue(response.body());
             }
             @Override
