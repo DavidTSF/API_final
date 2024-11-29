@@ -1,9 +1,11 @@
 package dev.davveg.api_final;
 
 import android.app.Application;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import dev.davveg.api_final.models.Pokemon;
@@ -18,6 +20,8 @@ public class PokemonViewModel extends AndroidViewModel {
 
     //MutableLiveData<PokeApiService.Respuesta> respuestaMutableLiveData = new MutableLiveData<>();
 
+    MutableLiveData<PokemonList> pokemonLista = new MutableLiveData<>();
+
     Retrofit retrofit;
     PokeApiService service;
 
@@ -31,14 +35,13 @@ public class PokemonViewModel extends AndroidViewModel {
 
     }
 
-    public void pokemonById(PokeApiService pokeService) {
+    public void pokemonById(int id) {
         Call<Pokemon> pokeCall =
-                pokeService.getPokemonById(Integer.toString((int) (Math.random() *
-                        807 + 1)));
+                service.getPokemonById(String.valueOf(id));
         pokeCall.enqueue(new Callback<Pokemon>() {
             @Override
             public void onResponse(Call<Pokemon> call, Response<Pokemon> response) {
-
+                Pokemon foundPoke = response.body();
                 if (foundPoke != null) {
                     Log.d("POKEMON NAME", foundPoke.getName());
                     Log.d("POKEMON HEIGHT", foundPoke.getHeight());
@@ -47,15 +50,35 @@ public class PokemonViewModel extends AndroidViewModel {
             }
             @Override
             public void onFailure(Call<Pokemon> call, Throwable t) {
-// TOAST THE FAILURE
-                Toast.makeText(MainActivity.this, t.getMessage(),
-                        Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public void getPokemonList() {
+        Call<PokemonList> pokeCall = service.getPokemonList(20, 0);
+        pokeCall.enqueue(new Callback<PokemonList>() {
+            @Override
+            public void onResponse(Call<PokemonList> call, Response<PokemonList> response) {
+
+                response.body().getResults().forEach(
+                        pokemon -> {
+                            Log.d("DEBUG name", pokemon.getName());
+                            Log.d("DEBUG weight", pokemon.getWeight());
+                            Log.d("DEBUG height", pokemon.getHeight());
+
+                        }
+                );
+
+                pokemonLista.postValue(response.body());
+            }
+            @Override
+            public void onFailure(Call<PokemonList> call, Throwable t) {
             }
         });
     }
 
 
-
-
-
+    public LiveData<PokemonList> pokemonLista() {
+        return this.pokemonLista;
+    }
 }
